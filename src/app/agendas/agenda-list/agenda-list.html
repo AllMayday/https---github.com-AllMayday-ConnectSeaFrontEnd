@@ -1,0 +1,39 @@
+<div class="container my-3">
+  <div class="d-flex justify-content-between mb-2">
+    <h2>Agendas</h2>
+    <a class="btn btn-success" href="/agendas/new">+ New Agenda</a>
+  </div>
+
+  <!-- Filter input -->
+  <!-- <input class="form-control mb-2" placeholder="Search..." [(ngModel)]="filterText"> -->
+<input class="form-control mb-2" placeholder="Search..." [(ngModel)]="filterText">
+  <!-- Data table -->
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th (click)="sortBy('id')">ID</th>
+        <th (click)="sortBy('porto')">Porto</th>
+        <th (click)="sortBy('navio?.nome')">Navio</th>
+        <th (click)="sortBy('chegada')">ETA</th>
+        <th (click)="sortBy('etb')">ETB</th>
+        <th (click)="sortBy('partida')">ETD</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of agendas | filter:filterText">
+        <td>{{ a.id }}</td>
+        <td>{{ a.porto }}</td>
+        <td>{{ a.navio?.nome }}</td>
+        <td>{{ a.chegada | date:'dd/MM/yyyy' }}</td>   
+        <td>{{ a.etb | date:'dd/MM/yyyy' }}</td>
+        <td>{{ a.partida | date:'dd/MM/yyyy' }}</td>
+        <td>{{ a.status }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="deleteAgenda(a.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

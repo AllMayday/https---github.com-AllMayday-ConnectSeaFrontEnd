@@ -1,0 +1,110 @@
+<div class="container my-3">
+  <div class="d-flex justify-content-between mb-2">
+    <h2>Manifestos</h2>
+    <a class="btn btn-success" routerLink="/manifestos/new">+ New Manifesto</a>
+  </div>
+
+  <input class="form-control mb-2" placeholder="Search..." [(ngModel)]="filterText">
+
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th (click)="sortBy('id')" style="cursor:pointer">ID</th>
+        <th (click)="sortBy('numero')" style="cursor:pointer">Número</th>
+        <th (click)="sortBy('tipo')" style="cursor:pointer">Tipo</th>
+        <th (click)="sortBy('navio.nome')" style="cursor:pointer">Navio</th>
+        <th (click)="sortBy('portoOrigem')" style="cursor:pointer">Origem</th>
+        <th (click)="sortBy('portoDestino')" style="cursor:pointer">Destino</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of filteredManifestos">
+        <td>{{ m.id }}</td>
+        <td>{{ m.numero }}</td>
+        <td>{{ m.tipo }}</td>
+        <td>{{ m.navio?.nome }}</td>
+        <td>{{ m.portoOrigem }}</td>
+        <td>{{ m.portoDestino }}</td>
+        <td>
+          <button class="btn btn-outline-success btn-sm me-1"
+                  (click)="openLinkModal(m)">
+            Vincular Escalas
+          </button>
+
+          <button class="btn btn-danger btn-sm" (click)="deleteManifesto(m.id)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredManifestos.length === 0">
+        <td colspan="7" class="text-center text-muted">No manifestos found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="modal fade show" tabindex="-1" [ngClass]="{ 'd-block': showLinkModal }" *ngIf="showLinkModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Vincular Manifesto #{{ currentManifesto?.id }} — {{ currentManifesto?.numero }}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeLinkModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngIf="linkSuccessMessage" class="alert alert-success">{{ linkSuccessMessage }}</div>
+        <div *ngIf="linkErrorMessage" class="alert alert-danger">{{ linkErrorMessage }}</div>
+
+        <p class="small text-muted">Marque as escalas que deseja vincular a este manifesto:</p>
+
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th style="width:40px"></th>
+              <th>ID</th>
+              <th>Porto</th>
+              <th>Navio</th>
+              <th>ETB</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of allEscalas" [ngClass]="{'table-success': isJustLinked(e.id), 'table-secondary': isAlreadyLinked(e)}">
+              <td>
+                <input type="checkbox"
+                       [disabled]="isAlreadyLinked(e)"
+                       [checked]="selectedEscalas.has(e.id)"
+                       (change)="toggleSelectEscala(e, $event.target.checked)">
+              </td>
+              <td>{{ e.id }}</td>
+              <td>{{ e.porto }}</td>
+              <td>{{ e.navio?.nome }}</td>
+              <td>{{ e.etb | date }}</td>
+              <td>
+                <span *ngIf="isAlreadyLinked(e)" class="badge bg-secondary">Vinculado</span>
+                <span *ngIf="isJustLinked(e.id)" class="badge bg-success">Acabou de vincular</span>
+                <button *ngIf="isAlreadyLinked(e)"
+                        class="btn btn-sm btn-danger"
+                        [disabled]="unlinkingInProgress.has(e.id)"
+                        (click)="desvincularEscala(e.id)">
+                  <span *ngIf="!unlinkingInProgress.has(e.id)">Desvincular</span>
+                  <span *ngIf="unlinkingInProgress.has(e.id)">Desvinculando...</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeLinkModal()">Cancelar</button>
+        <button class="btn btn-primary" [disabled]="selectedEscalas.size === 0 || linkingInProgress" (click)="confirmLink()">
+          <span *ngIf="!linkingInProgress">Link selected</span>
+          <span *ngIf="linkingInProgress">Linking...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showLinkModal"></div>

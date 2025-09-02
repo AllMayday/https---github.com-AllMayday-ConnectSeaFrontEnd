@@ -1,0 +1,39 @@
+<div class="container my-3">
+  <h2>{{ id ? 'Edit' : 'New' }} Agenda</h2>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="mb-3">
+      <label class="form-label">Porto</label>
+      <input formControlName="porto" class="form-control" placeholder="Porto">
+    </div>
+    <div class="mb-3">
+    <label class="form-label">Navio</label>
+    <select class="form-control" formControlName="navioId">
+        <option [ngValue]="null" disabled>Select a navio</option>
+        <option *ngFor="let n of navios" [ngValue]="n.id">
+        {{ n.nome }} (IMO: {{ n.numeroIMO }})
+        </option>
+    </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Chegada</label>
+      <input type="date" formControlName="chegada" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Partida</label>
+      <input type="date" formControlName="partida" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">ETB</label>
+      <input type="date" formControlName="etb" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Status</label>
+      <input formControlName="status" class="form-control" placeholder="Status">
+    </div>
+    <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+      {{ id ? 'Update' : 'Create' }}
+    </button>
+    <button class="btn btn-secondary" routerLink="/agendas">Cancel</button>
+  </form>
+</div>
