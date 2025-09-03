@@ -1,1 +1,40 @@
-<p>navio-list works!</p>
+<div class="container my-3">
+  <div class="d-flex justify-content-between mb-2">
+    <h2>Navios</h2>
+    <a class="btn btn-success" href="/navios/new">+ New Navio</a>
+  </div>
+
+  <!-- Filter input -->
+  <input class="form-control mb-2" placeholder="Search..." [(ngModel)]="filterText">
+
+  <!-- Data table -->
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th (click)="sortBy('id')" style="cursor: pointer">ID <span *ngIf="sortField==='id'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+        <th (click)="sortBy('nome')" style="cursor: pointer">Nome <span *ngIf="sortField==='nome'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+        <th (click)="sortBy('numeroIMO')" style="cursor: pointer">IMO <span *ngIf="sortField==='numeroIMO'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+        <th (click)="sortBy('bandeira')" style="cursor: pointer">Bandeira <span *ngIf="sortField==='bandeira'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+        <th (click)="sortBy('tonelagem')" style="cursor: pointer">Tonelagem <span *ngIf="sortField==='tonelagem'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let n of filteredNavios">
+        <td>{{ n.id }}</td>
+        <td>{{ n.nome }}</td>
+        <td>{{ n.numeroIMO }}</td>
+        <td>{{ n.bandeira || '-' }}</td>
+        <td>{{ n.tonelagem }}</td>
+        <td>
+          <a class="btn btn-primary btn-sm me-1" [href]="'/navios/edit/' + n.id">Edit</a>
+          <a class="btn btn-info btn-sm me-1" [href]="'/navios/' + n.id">View</a>
+          <button class="btn btn-danger btn-sm" (click)="deleteNavio(n.id)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredNavios.length === 0">
+        <td colspan="6" class="text-center">No navios found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
